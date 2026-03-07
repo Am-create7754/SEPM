@@ -1,4 +1,4 @@
-# SEPM Tournament Management System
+# Cricket Tournament Management System
 
 This project is a full-stack web application for managing sports tournaments, built with a React frontend and an Express/MongoDB backend.
 
