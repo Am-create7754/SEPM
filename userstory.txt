@@ -1,0 +1,178 @@
+
+Dashboard Page
+#User Story 1: View Tournament Overview
+
+As a tournament administrator
+I want to see a dashboard with key statistics and live matches
+So that I can quickly understand the current state of all tournaments at a glance
+Acceptance Criteria:
+
+Display total tournaments, live matches, total matches, and teams registered
+Show live match cards with glowing yellow-golden borders
+Display team names, scores, and venue information
+Provide quick access to tournament management
+Tournaments Pages
+
+#User Story 2: View All Tournaments
+
+As a tournament administrator
+I want to see a list of all tournaments
+So that I can manage and monitor different cricket tournaments
+Acceptance Criteria:
+
+Display tournament cards (IPL, FABS) with match and team counts
+Show "Create Tournament" button for adding new tournaments
+Display tournament status (Active/Inactive)
+
+#User Story 3: Create New Tournament
+
+As a tournament administrator
+I want to create a new tournament with specific details
+So that I can organize cricket competitions with proper structure
+Acceptance Criteria:
+
+Provide form fields: Tournament Name, Start Date, Location, Format
+Allow team selection from available teams
+Display selected teams count
+Validate required fields before submission
+Navigate back to tournaments list after creation
+
+
+Matches Page
+#User Story 4: View and Filter Matches
+
+As a tournament organizer or viewer
+I want to see all matches with filtering options
+So that I can track match schedules and their current status
+Acceptance Criteria:
+
+Display filter tabs: All, Live, Upcoming, Completed, Cancelled
+Show match cards with teams, venue, and date
+Color-code status badges (Live=red, Upcoming=cyan, Completed=green, Cancelled=dark red)
+Provide hover effects for better interactivity
+
+
+Points Table Page
+#User Story 5: View Tournament Standings
+
+As a cricket fan or team member
+I want to view the points table for different tournaments
+So that I can track team rankings and performance
+Acceptance Criteria:
+
+Display tournament tabs (IPL, FABS)
+Show table with: Rank, Team Name, Played, Won, Lost, Points
+Display points calculation formula (Win=2pts, Loss=0pts)
+Highlight wins in green and losses in red
+Provide hover effects on table rows
+
+
+#Admin Dashboard Page
+User Story 6: Manage System from Admin Panel
+
+As a system administrator
+I want to access all management features from one dashboard
+So that I can efficiently oversee tournaments, matches, and teams
+Acceptance Criteria:
+
+Display overview statistics (Tournaments, Live Matches, Total Matches, Teams)
+Provide Quick Actions: Create Tournament, Schedule Match, Manage Teams, Settings
+Show active tournaments list with match and team counts
+Display "ACTIVE" status badges
+Enable navigation to specific management functions
+
+
+Profile Pages
+#User Story 7: View Player Profile
+
+As a cricket player
+I want to view my profile with personal statistics
+So that I can track my performance and manage my information
+Acceptance Criteria:
+
+Display player name, role, batting style, bowling type
+Show statistics: Matches Played, Runs Scored, Wickets Taken
+Provide navigation to "Edit Profile" and "My Team"
+
+
+Display player badge indicator
+#User Story 8: Create/Edit Player Profile
+
+As a cricket player
+I want to create or update my player profile
+So that my information is accurate and up-to-date for tournaments
+Acceptance Criteria:
+
+Provide fields: Player Name, Role, Batting, Bowling Type
+Offer dropdown selections for standardized options
+Validate that player name is not empty
+Enable/disable submit button based on validation
+Navigate to profile page after successful creation
+
+
+#User Story 9: Access Team Management
+
+As a cricket player
+I want to view my team or join/create a team
+So that I can participate in tournaments
+Acceptance Criteria:
+
+Display empty state if not part of any team
+Provide "Join Team" and "Create Team" options
+Navigate to respective team management pages
+
+
+#User Story 10: Join Existing Team
+
+As a cricket player
+I want to join an existing team using a team code
+So that I can become part of an established team
+Acceptance Criteria:
+
+Provide input field for team code
+Display placeholder with example codes
+Show demo codes for testing (SEPM2025, WWHDB4)
+Enable "Join Team" button only when code is entered
+Provide back navigation to My Team page
+Navigate to My Team after successful join
+
+
+#User Story 11: Create Multiple Teams
+
+As a tournament organizer
+I want to create multiple teams with player limits
+So that I can set up teams for tournament participation
+Acceptance Criteria:
+
+Provide form fields: Team Name, Max Players
+Allow dynamic addition of teams
+Display created teams with player counts (e.g., "1/11")
+Enable team deletion with trash icon
+Show pre-populated teams (RCB, MI, CSK, DC)
+Require at least team name and max players to add
+General User Stories
+
+
+#User Story 12: Navigate Between Pages
+
+As a system user
+I want to navigate between different sections using sidebar
+So that I can access all features of the application easily
+Acceptance Criteria:
+
+Display sidebar with all menu items
+Highlight active page in sidebar
+Show expandable submenu for Profile section
+Maintain consistent navigation across all pages
+Display CricScore logo and SEPM project information
+
+#User Story 13: Identify Admin Mode
+
+As a system user
+I want to see my current mode and logout option
+So that I know my access level and can exit securely
+Acceptance Criteria:
+
+Display "Admin Mode" indicator with green dot
+Provide "Logout" button in top bar
+Maintain consistent top bar across all pages
