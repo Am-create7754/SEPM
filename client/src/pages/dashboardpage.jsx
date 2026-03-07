@@ -1,12 +1,38 @@
 // src/pages/DashboardPage.jsx
+import { useEffect, useState } from "react";
 import Navbar from '../components/navbar';
 import Sidebar from '../components/sidebar';
 import Hero from '../components/hero';
 import LiveNow from '../components/livenow';
 
 import { Trophy, Activity, BarChart3 } from 'lucide-react';
+ import {
+  getTournaments,
+  getAllMatches,
+} from "../utils/storage";
+
 
 export default function DashboardPage() {
+ 
+  const [tournaments, setTournaments] = useState([]);
+  const [matches, setMatches] = useState([]);
+
+  useEffect(() => {
+    const allTournaments = getTournaments();
+    const allMatches = getAllMatches();
+
+    setTournaments(allTournaments);
+    setMatches(allMatches);
+  }, []);
+
+  const totalTournaments = tournaments.length;
+
+  const totalMatches = matches.length;
+
+  const liveMatches = matches.filter(
+    (m) => m.status === "live"
+  ).length;
+
   return (
     <div className="min-h-screen w-full bg-[#010806] text-slate-100 flex flex-col">
      <div className="sticky top-0 z-50">
@@ -23,20 +49,20 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
             <StatCard
               label="Total Tournaments"
-              value="0"
+              value={totalTournaments}
               icon={<Trophy size={16} />}
             />
 
             <StatCard
               label="Live Matches"
-              value="0"
+              value={liveMatches}
               live
               icon={<Activity size={16} />}
             />
 
             <StatCard
               label="Total Matches"
-              value="0"
+              value={totalMatches}
               icon={<BarChart3 size={16} />}
             />
           </div>

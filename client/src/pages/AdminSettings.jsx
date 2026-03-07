@@ -21,16 +21,15 @@ export default function AdminSettings() {
   });
 
   const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
 
   /* ============================= */
   /*   Protect Route (Admin Only)  */
   /* ============================= */
-  useEffect(() => {
-    if (!token || role !== "admin") {
-      navigate("/login");
-    }
-  }, [token, role, navigate]);
+  // useEffect(() => {
+  //   if (!token || role !== "admin") {
+  //     navigate("/login");
+  //   }
+  // }, [token, role, navigate]);
 
   /* ============================= */
   /*      Fetch Existing Data      */
@@ -112,9 +111,18 @@ export default function AdminSettings() {
         <Sidebar />
 
         <main className="flex-1 px-20 py-10">
-          <h1 className="text-2xl font-semibold mb-10">
-            Admin Settings
-          </h1>
+          <div className="flex items-center justify-between mb-10">
+  <h1 className="text-2xl font-semibold">
+    Admin Settings
+  </h1>
+
+  <button
+    onClick={() => navigate("/admin")}
+    className="px-4 py-1 bg-emerald-600 hover:bg-emerald-700 transition rounded-lg text-sm font-medium"
+  >
+    ← Back
+  </button>
+</div>
 
           {/* ================= Profile Settings ================= */}
           <section className="mb-12">
