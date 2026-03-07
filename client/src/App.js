@@ -18,6 +18,8 @@ import TournamentDetailsPage from './pages/admin/TournamentDetailsPage';
 import ManageTeamPage from './pages/ManageTeamPage';
 import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
 import AdminSettings from './pages/AdminSettings';
+import PlayMatch from './pages/PlayMatch';
+import TossPage from './pages/TossPage';
 
 
 
@@ -45,6 +47,8 @@ export default function App() {
     </ProtectedAdminRoute>
   }
 />      <Route path="/create-team" element={<CreateTeamPage />} />
+<Route path="/play-match/:matchId" element={<PlayMatch/>}/>
+<Route path="/match/:matchId/toss" element={<TossPage/>}/>
       <Route path="/join-team" element={<JoinTeamPage />} />
       <Route path="/admin/settings" element={<ProtectedAdminRoute><AdminSettings /></ProtectedAdminRoute>} />
 
