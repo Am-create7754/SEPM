@@ -8,7 +8,7 @@ export default function Navbar() {
 
   function handleLogout() {
     logoutUser();
-    navigate("/"); // login page
+    navigate("/login"); // login page
   }
 
   // 🔥 Role Detection
