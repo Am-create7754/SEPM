@@ -20,6 +20,7 @@ import ProtectedAdminRoute from "./routes/ProtectedAdminRoute";
 import AdminSettings from './pages/AdminSettings';
 import PlayMatch from './pages/PlayMatch';
 import TossPage from './pages/TossPage';
+import PlayerSelectionPage from './pages/PlayersSelectionPage';
 
 
 
@@ -51,6 +52,7 @@ export default function App() {
 <Route path="/match/:matchId/toss" element={<TossPage/>}/>
       <Route path="/join-team" element={<JoinTeamPage />} />
       <Route path="/admin/settings" element={<ProtectedAdminRoute><AdminSettings /></ProtectedAdminRoute>} />
+      <Route path="/player-selection/:matchId" element={<PlayerSelectionPage />} />
 
 
 
