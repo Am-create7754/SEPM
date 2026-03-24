@@ -1,11 +1,9 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const tournamentSchema = new mongoose.Schema({
   name: String,
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
+  teams: [String],
+  matches: [Object],
 });
 
-module.exports = mongoose.model("Tournament", tournamentSchema);
+export default mongoose.model("Tournament", tournamentSchema);

@@ -6,7 +6,7 @@ import { getAllMatches } from "../utils/storage";
 
 export default function PlayMatch() {
 
-  const { matchId } = useParams();
+const { matchId } = useParams();
   const navigate = useNavigate();
 
   const [match,setMatch] = useState(null);
@@ -33,14 +33,21 @@ export default function PlayMatch() {
     "Barsapara Cricket Stadium"
   ];
 
-  useEffect(()=>{
+  useEffect(() => {
 
-    const matches = getAllMatches();
-    const found = matches.find(m => String(m.id) === matchId);
+  async function fetchMatch() {
+    try {
+      const res = await fetch(`http://localhost:5000/api/matches/${matchId}`);
+      const data = await res.json();
+      setMatch(data);
+    } catch (err) {
+      console.error("Error fetching match:", err);
+    }
+  }
 
-    setMatch(found);
+  fetchMatch();
 
-  },[matchId]);
+}, [matchId]);
 
 
   /* =========================
@@ -57,10 +64,6 @@ export default function PlayMatch() {
 
   },[matchType]);
 
-
-  if(!match) return null;
-
-
   const isValid =
     overs &&
     ballsPerOver &&
@@ -69,6 +72,8 @@ export default function PlayMatch() {
     city &&
     date &&
     ballType;
+
+  if (!match) return <div className="text-white p-10">Loading...</div>;
 
   return (
     <div className="min-h-screen w-full bg-[#010806] text-slate-100 flex flex-col">

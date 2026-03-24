@@ -2,7 +2,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Navbar from "../components/navbar";
 import Sidebar from "../components/sidebar";
-import { getAllMatches } from "../utils/storage";
 
 export default function TossPage() {
 
@@ -13,15 +12,27 @@ export default function TossPage() {
   const [winner,setWinner] = useState(null);
   const [decision,setDecision] = useState("");
 
+  /* ✅ FETCH FROM BACKEND */
   useEffect(()=>{
 
-    const matches = getAllMatches();
-    const found = matches.find(m => String(m.id) === matchId);
-    setMatch(found);
+    async function fetchMatch(){
+      try{
+        const res = await fetch(`http://localhost:5000/api/matches/${matchId}`);
+        const data = await res.json();
+        setMatch(data);
+      }catch(err){
+        console.error("Error fetching match:", err);
+      }
+    }
+
+    fetchMatch();
 
   },[matchId]);
 
-  if(!match) return null;
+  /* ✅ LOADING FIX */
+  if(!match){
+    return <div className="text-white p-10">Loading Toss...</div>;
+  }
 
   const ready = winner && decision;
 
@@ -38,14 +49,11 @@ export default function TossPage() {
 
           <div className="max-w-3xl mx-auto">
 
-            {/* TITLE */}
-
             <h1 className="text-xl font-semibold mb-6 text-center">
               Who won the toss?
             </h1>
 
-            {/* TEAM SELECTION */}
-
+            {/* TEAMS */}
             <div className="flex justify-between mb-8">
 
               <TeamCard
@@ -63,27 +71,19 @@ export default function TossPage() {
             </div>
 
             {/* WINNER TEXT */}
-
             {winner && (
-
               <div className="text-center mb-8">
-
                 <p className="text-emerald-400 font-medium text-sm">
                   {winner} won the toss
                 </p>
-
                 <p className="text-xs text-slate-400 mt-1">
                   What will they choose?
                 </p>
-
               </div>
-
             )}
 
-            {/* BAT OR BOWL */}
-
+            {/* DECISION */}
             {winner && (
-
               <div className="flex justify-center gap-8 mb-10">
 
                 <DecisionCard
@@ -101,11 +101,9 @@ export default function TossPage() {
                 />
 
               </div>
-
             )}
 
-            {/* LETS PLAY */}
-
+            {/* BUTTON */}
             <button
               disabled={!ready}
               onClick={()=>navigate(`/player-selection/${matchId}`)}
@@ -130,9 +128,6 @@ export default function TossPage() {
     </div>
   );
 }
-
-
-/* TEAM CARD */
 
 function TeamCard({name,active,onClick}){
 

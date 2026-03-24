@@ -22,18 +22,24 @@ const bowlingPlayers = teamB?.members || []
 
   const allSelected = striker && nonStriker && bowler;
 
-  useEffect(() => {
+useEffect(() => {
 
-  const matches = getAllMatches();
+  async function fetchMatch() {
+    try {
+      const res = await fetch(`http://localhost:5000/api/matches/${matchId}`);
+      const data = await res.json();
 
-  const match = matches.find(
-    m => String(m.id) === matchId
-  );
+      if (data) {
+        setTeamA(data.teamA);
+        setTeamB(data.teamB);
+      }
 
-  if(match){
-    setTeamA(match.teamA);
-    setTeamB(match.teamB);
+    } catch (err) {
+      console.error("Error fetching match:", err);
+    }
   }
+
+  fetchMatch();
 
 }, [matchId]);
 

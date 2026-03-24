@@ -270,16 +270,30 @@ export default function TournamentDetailsPage() {
                   )}
 
                   <div className="flex items-center gap-4 mt-3">
-                    {m.status !== "cancelled" && (
-                      <button
-                        onClick={() =>
-                          navigate(`/play-match/${m.id}`)
-                        }
-                        className="bg-emerald-500 hover:bg-emerald-600 text-black text-xs px-3 py-2 rounded-lg"
-                      >
-                        Start Playing
-                      </button>
-                    )}
+                   {m.status !== "cancelled" && (
+  <button
+    onClick={async () => {
+      const res = await fetch("http://localhost:5000/api/matches", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          teamA: m.teamA,
+          teamB: m.teamB
+        })
+      });
+
+      const data = await res.json();
+
+      // 🔥 SAME ROUTE use karo
+      navigate(`/play-match/${data._id}`);
+    }}
+    className="bg-emerald-500 hover:bg-emerald-600 text-black text-xs px-3 py-2 rounded-lg"
+  >
+    Start Playing
+  </button>
+)}
 
                     {isAdmin && (
                       <>
