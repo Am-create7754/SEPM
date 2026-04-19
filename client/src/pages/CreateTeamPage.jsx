@@ -1,22 +1,42 @@
-// src/pages/CreateTeamPage.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import Navbar from '../components/navbar';
 import Sidebar from '../components/sidebar';
 import { PlusCircle, Trash2 } from 'lucide-react';
-import { getTeams, saveTeams } from '../utils/storage';
 
 export default function CreateTeamPage() {
   const [teams, setTeams] = useState([]);
   const [teamName, setTeamName] = useState('');
   const [maxPlayers, setMaxPlayers] = useState(11);
+  const [includeMyself, setIncludeMyself] = useState(false);
+
+  const navigate = useNavigate();
+
+  /* =========================
+     FETCH TEAMS FROM BACKEND
+  ========================= */
+  async function fetchTeams() {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:5000/api/teams", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setTeams(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   useEffect(() => {
-    setTeams(getTeams());
+    fetchTeams();
   }, []);
 
-  function handleCreateTeam(e) {
+  /* =========================
+     CREATE TEAM
+  ========================= */
+  async function handleCreateTeam(e) {
     e.preventDefault();
 
     if (!teamName.trim()) {
@@ -24,31 +44,73 @@ export default function CreateTeamPage() {
       return;
     }
 
-    const newTeam = {
-      id: Date.now(),
-      name: teamName,
-      members: [{ name: 'You', role: 'Captain' }],
-      maxPlayers: Number(maxPlayers),
-    };
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:5000/api/teams", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: teamName,
+          maxPlayers: Number(maxPlayers)
+        })
+      });
+      const newTeam = await res.json();
 
-    const updatedTeams = [...teams, newTeam];
-    setTeams(updatedTeams);
-    saveTeams(updatedTeams);
+      if (includeMyself) {
+        const token = localStorage.getItem("token");
+        try {
+          const userRes = await fetch("http://localhost:5000/api/admin/profile", {
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+          if (userRes.ok) {
+            const userData = await userRes.json();
+            if (userData.name && userData.playerRole) {
+              await fetch(`http://localhost:5000/api/teams/${newTeam._id}/add-player`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: userData.name, role: userData.playerRole })
+              });
+            }
+          }
+        } catch (err) {
+          console.error("Failed to add self to team", err);
+        }
+      }
 
-    setTeamName('');
-    setMaxPlayers(11);
+      fetchTeams(); // refresh list
+
+      setTeamName('');
+      setMaxPlayers(11);
+      setIncludeMyself(false);
+
+    } catch (err) {
+      console.error(err);
+    }
   }
 
-  function handleDeleteTeam(id) {
+  /* =========================
+     DELETE TEAM
+  ========================= */
+  async function handleDeleteTeam(id) {
     const confirmDelete = window.confirm("Delete this team?");
     if (!confirmDelete) return;
 
-    const updated = teams.filter(team => team.id !== id);
-    setTeams(updated);
-    saveTeams(updated);
-  }
-  const navigate = useNavigate();
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`http://localhost:5000/api/teams/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
 
+      fetchTeams();
+
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   return (
     <div className="min-h-screen w-full bg-[#010806] text-slate-100 flex flex-col">
@@ -91,6 +153,19 @@ export default function CreateTeamPage() {
               />
             </div>
 
+            <div className="flex items-center gap-2 mt-2">
+              <input 
+                type="checkbox" 
+                id="includeMyself"
+                checked={includeMyself}
+                onChange={(e) => setIncludeMyself(e.target.checked)}
+                className="rounded border-slate-700 bg-black text-emerald-500 focus:ring-emerald-500"
+              />
+              <label htmlFor="includeMyself" className="text-xs text-slate-400">
+                Include me as a player in this team
+              </label>
+            </div>
+
             <button
               type="submit"
               className="mt-4 w-full py-2 rounded-md bg-emerald-500/20 border border-emerald-500 text-emerald-300 hover:bg-emerald-500/30 transition flex items-center justify-center gap-2"
@@ -104,10 +179,10 @@ export default function CreateTeamPage() {
           <div className="max-w-xl space-y-3">
             {teams.map(team => (
               <div
-               key={team.id}
-      onClick={() => navigate(`/manage-team/${team.id}`)}
-      className="cursor-pointer flex justify-between items-center rounded-lg border border-emerald-500/20 bg-black/40 px-4 py-3 hover:border-emerald-400 transition"
-    >
+                key={team._id}
+                onClick={() => navigate(`/manage-team/${team._id}`)}
+                className="cursor-pointer flex justify-between items-center rounded-lg border border-emerald-500/20 bg-black/40 px-4 py-3 hover:border-emerald-400 transition"
+              >
                 <div>
                   <p className="text-sm font-medium text-emerald-300">
                     {team.name}
@@ -118,7 +193,10 @@ export default function CreateTeamPage() {
                 </div>
 
                 <button
-                  onClick={() => handleDeleteTeam(team.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteTeam(team._id);
+                  }}
                   className="text-red-400 hover:text-red-300"
                 >
                   <Trash2 size={14} />

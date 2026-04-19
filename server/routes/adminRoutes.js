@@ -1,17 +1,23 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const {
+
+// Controllers import (Dhyan rakhna .js extension zaroori hai)
+import {
   getProfile,
+  createProfile,
   updateProfile,
   getSettings,
   updateSettings,
   deleteAllTournaments,
-} = require("../controllers/adminController");
+} from "../controllers/adminController.js";
 
-const { protect, adminOnly } = require("../middleware/AuthMiddleware");
+// Middleware import
+import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
-router.get("/profile", protect, adminOnly, getProfile);
-router.put("/profile", protect, adminOnly, updateProfile);
+// Routes definition
+router.get("/profile", protect, getProfile);
+router.post("/profile", protect, createProfile);
+router.put("/profile", protect, updateProfile);
 
 router.get("/settings", protect, adminOnly, getSettings);
 router.put("/settings", protect, adminOnly, updateSettings);
@@ -23,4 +29,4 @@ router.delete(
   deleteAllTournaments
 );
 
-module.exports = router;
+export default router; // 🔥 module.exports ki jagah ye aayega

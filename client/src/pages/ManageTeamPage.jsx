@@ -12,74 +12,141 @@ export default function ManageTeamPage() {
   const [playerName, setPlayerName] = useState("");
   const [playerRole, setPlayerRole] = useState("Batsman");
 
-  // 🔥 FETCH TEAM FROM DB
-  useEffect(() => {
-    fetch(`http://localhost:5000/api/teams`)
-      .then(res => res.json())
-      .then(data => {
-        const selected = data.find(t => t._id === id);
-        setTeam(selected);
+  /* =========================
+     FETCH SINGLE TEAM
+  ========================= */
+  async function fetchTeam() {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`http://localhost:5000/api/teams/${id}`, {
+        headers: { "Authorization": `Bearer ${token}` }
       });
+      const data = await res.json();
+      setTeam(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  useEffect(() => {
+    if (id) fetchTeam();
   }, [id]);
 
-  // 🔥 UPDATE TEAM IN DB
-  async function updateTeam(updatedTeam) {
-    const res = await fetch(`http://localhost:5000/api/teams/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedTeam),
-    });
-
-    const data = await res.json();
-    setTeam(data);
-  }
-
-  // ➕ ADD PLAYER
-  function addPlayer() {
+  /* =========================
+     ADD PLAYER
+  ========================= */
+  async function addPlayer() {
     if (!playerName.trim()) return;
 
-    if (team.members.length >= team.maxPlayers) {
-      alert("Team is full");
-      return;
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`http://localhost:5000/api/teams/${id}/add-player`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: playerName,
+          role: playerRole
+        })
+      });
+
+      setPlayerName("");
+      fetchTeam(); // refresh
+
+    } catch (err) {
+      console.error(err);
     }
-
-    const updatedTeam = {
-      ...team,
-      members: [...team.members, { name: playerName, role: playerRole }],
-    };
-
-    updateTeam(updatedTeam);
-    setPlayerName("");
   }
 
-  // ❌ REMOVE PLAYER
-  function removePlayer(index) {
-    const updatedMembers = team.members.filter((_, i) => i !== index);
+  /* =========================
+     ADD MYSELF
+  ========================= */
+  async function addMyself() {
+    try {
+      const token = localStorage.getItem("token");
+      const userRes = await fetch("http://localhost:5000/api/admin/profile", {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
 
-    updateTeam({ ...team, members: updatedMembers });
+      if (!userRes.ok) {
+        alert("Please create a player profile first!");
+        return;
+      }
+
+      const userData = await userRes.json();
+      if (!userData.playerRole) {
+        alert("Please set up your player profile first!");
+        return;
+      }
+
+      const res = await fetch(`http://localhost:5000/api/teams/${id}/add-player`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: userData.name,
+          role: userData.playerRole
+        })
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(errorData.msg || "Failed to add yourself.");
+        return;
+      }
+
+      fetchTeam(); // refresh
+    } catch (err) {
+      console.error(err);
+      alert("Failed to add yourself.");
+    }
   }
 
-  // 🔄 CHANGE ROLE
-  function changeRole(index, newRole) {
-    const updatedMembers = team.members.map((m, i) =>
-      i === index ? { ...m, role: newRole } : m
-    );
+  /* =========================
+     REMOVE PLAYER
+  ========================= */
+  async function removePlayer(index) {
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`http://localhost:5000/api/teams/${id}/remove-player`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ index })
+      });
 
-    updateTeam({ ...team, members: updatedMembers });
+      fetchTeam();
+
+    } catch (err) {
+      console.error(err);
+    }
   }
 
-  // 🗑 DELETE TEAM
+  /* =========================
+     DELETE TEAM
+  ========================= */
   async function deleteTeam() {
     const confirmDelete = window.confirm("Delete this team?");
     if (!confirmDelete) return;
 
-    await fetch(`http://localhost:5000/api/teams/${id}`, {
-      method: "DELETE",
-    });
+    try {
+      const token = localStorage.getItem("token");
+      await fetch(`http://localhost:5000/api/teams/${id}`, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` }
+      });
 
-    navigate("/create-team");
+      navigate("/create-team");
+
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   if (!team) return <div className="text-white p-10">Loading...</div>;
@@ -95,7 +162,6 @@ export default function ManageTeamPage() {
 
           {/* Header */}
           <div className="flex items-center gap-3 mb-6">
-
             <button
               onClick={() => navigate("/create-team")}
               className="p-2 rounded-md border border-emerald-500/20"
@@ -123,27 +189,12 @@ export default function ManageTeamPage() {
                   <p className="text-xs text-slate-400">{player.role}</p>
                 </div>
 
-                <div className="flex gap-2 items-center">
-                  <select
-                    value={player.role}
-                    onChange={(e) =>
-                      changeRole(index, e.target.value)
-                    }
-                    className="bg-black border text-sm px-2 py-1 rounded"
-                  >
-                    <option>Batsman</option>
-                    <option>Bowler</option>
-                    <option>All-Rounder</option>
-                    <option>Wicket-Keeper</option>
-                  </select>
-
-                  <button
-                    onClick={() => removePlayer(index)}
-                    className="text-red-400"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
+                <button
+                  onClick={() => removePlayer(index)}
+                  className="text-red-400"
+                >
+                  <Trash2 size={14} />
+                </button>
               </div>
             ))}
           </div>
@@ -175,6 +226,14 @@ export default function ManageTeamPage() {
               >
                 <UserPlus size={14} />
                 Add
+              </button>
+
+              <button
+                onClick={addMyself}
+                className="px-3 py-2 bg-slate-800 text-emerald-400 border border-emerald-500/30 hover:bg-slate-700 transition rounded-md flex items-center gap-1"
+              >
+                <UserPlus size={14} />
+                Add Myself
               </button>
             </div>
           )}

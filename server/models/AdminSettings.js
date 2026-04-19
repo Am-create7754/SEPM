@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const adminSettingsSchema = new mongoose.Schema({
   defaultOvers: { type: Number, default: 20 },
@@ -7,4 +7,4 @@ const adminSettingsSchema = new mongoose.Schema({
   allowSelfRegistration: { type: Boolean, default: false },
 });
 
-module.exports = mongoose.model("AdminSettings", adminSettingsSchema);
+export default mongoose.model("AdminSettings", adminSettingsSchema);

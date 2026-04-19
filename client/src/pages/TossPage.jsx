@@ -12,7 +12,9 @@ export default function TossPage() {
   const [winner,setWinner] = useState(null);
   const [decision,setDecision] = useState("");
 
-  /* ✅ FETCH FROM BACKEND */
+  /* =========================
+     FETCH MATCH
+  ========================= */
   useEffect(()=>{
 
     async function fetchMatch(){
@@ -29,7 +31,25 @@ export default function TossPage() {
 
   },[matchId]);
 
-  /* ✅ LOADING FIX */
+  // Ye function component ke andar bana
+  async function handlePlay() {
+    try {
+      await fetch(`http://localhost:5000/api/matches/${matchId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          toss: { 
+            winner: winner.name, 
+            decision 
+          }
+        })
+      });
+      navigate(`/player-selection/${matchId}`);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   if(!match){
     return <div className="text-white p-10">Loading Toss...</div>;
   }
@@ -57,14 +77,14 @@ export default function TossPage() {
             <div className="flex justify-between mb-8">
 
               <TeamCard
-                name={match.teamA}
-                active={winner===match.teamA}
+                team={match.teamA}
+                active={winner?._id === match.teamA?._id}
                 onClick={()=>setWinner(match.teamA)}
               />
 
               <TeamCard
-                name={match.teamB}
-                active={winner===match.teamB}
+                team={match.teamB}
+                active={winner?._id === match.teamB?._id}
                 onClick={()=>setWinner(match.teamB)}
               />
 
@@ -74,7 +94,7 @@ export default function TossPage() {
             {winner && (
               <div className="text-center mb-8">
                 <p className="text-emerald-400 font-medium text-sm">
-                  {winner} won the toss
+                  {winner.name} won the toss
                 </p>
                 <p className="text-xs text-slate-400 mt-1">
                   What will they choose?
@@ -106,7 +126,7 @@ export default function TossPage() {
             {/* BUTTON */}
             <button
               disabled={!ready}
-              onClick={()=>navigate(`/player-selection/${matchId}`)}
+              onClick={handlePlay}
               className={`
                 w-full py-3 rounded-lg text-sm font-medium
                 ${
@@ -129,7 +149,12 @@ export default function TossPage() {
   );
 }
 
-function TeamCard({name,active,onClick}){
+/* =========================
+   TEAM CARD (FIXED)
+========================= */
+function TeamCard({team,active,onClick}){
+
+  const name = team?.name || "";
 
   const initials = name
     .split(" ")
@@ -166,9 +191,9 @@ function TeamCard({name,active,onClick}){
   )
 }
 
-
-/* BAT / BOWL CARD */
-
+/* =========================
+   DECISION CARD
+========================= */
 function DecisionCard({label,icon,active,onClick}){
 
   return(

@@ -5,6 +5,9 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import teamRoutes from "./routes/teamRoutes.js";
 import matchRoutes from "./routes/matchRoutes.js";
+import tournamentRoutes from "./routes/tournamentRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import authRoutes from "./routes/authRoutes.js"; 
 
 dotenv.config();
 
@@ -20,6 +23,9 @@ connectDB();
 // routes
 app.use("/api/teams", teamRoutes);
 app.use("/api/matches", matchRoutes);
+app.use("/api/tournaments", tournamentRoutes);
+app.use("/api/admin", adminRoutes); // 🔥 YE WALI LINE MISSING THI!
+app.use("/api/auth", authRoutes);
 
 // test route
 app.get("/", (req, res) => {
@@ -27,7 +33,8 @@ app.get("/", (req, res) => {
 });
 
 // server start
+// server.js
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} 🚀`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on http://localhost:${PORT} 🚀`);
 });

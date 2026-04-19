@@ -1,67 +1,66 @@
 import { useParams } from "react-router-dom";
-import { getAllMatches } from "../utils/storage";
-import { useEffect, useState } from "react";import Navbar from "../components/navbar";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import Navbar from "../components/navbar";
 import Sidebar from "../components/sidebar";
 import PlayerSelectorModal from "../components/PlayerSelectorModal";
 
 export default function PlayerSelectionPage() {
 
+  const { matchId } = useParams();
+
+  const [teamA, setTeamA] = useState(null);
+  const [teamB, setTeamB] = useState(null);
+const navigate = useNavigate();
   const [striker, setStriker] = useState(null);
   const [nonStriker, setNonStriker] = useState(null);
   const [bowler, setBowler] = useState(null);
 
   const [modalType, setModalType] = useState(null);
 
-  const { matchId } = useParams();
-
-const [teamA, setTeamA] = useState(null);
-const [teamB, setTeamB] = useState(null);
-
-const battingPlayers = teamA?.members || []
-const bowlingPlayers = teamB?.members || []
-
   const allSelected = striker && nonStriker && bowler;
 
-useEffect(() => {
+  /* =========================
+     FETCH MATCH (POPULATED)
+  ========================== */
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch(`http://localhost:5000/api/matches/${matchId}`);
+        const match = await res.json();
 
-  async function fetchMatch() {
-    try {
-      const res = await fetch(`http://localhost:5000/api/matches/${matchId}`);
-      const data = await res.json();
+        // 🔥 DIRECT USE (NO FIND)
+        setTeamA(match.teamA);
+        setTeamB(match.teamB);
 
-      if (data) {
-        setTeamA(data.teamA);
-        setTeamB(data.teamB);
+      } catch (err) {
+        console.error("Error:", err);
       }
-
-    } catch (err) {
-      console.error("Error fetching match:", err);
     }
+
+    fetchData();
+  }, [matchId]);
+
+  /* =========================
+     SAFE GUARD
+  ========================== */
+
+  if (!teamA || !teamB) {
+    return <div className="text-white p-10">Loading players...</div>;
   }
 
-  fetchMatch();
+  const battingPlayers = teamA.members || [];
+  const bowlingPlayers = teamB.members || [];
 
-}, [matchId]);
-
-if (!teamA || !teamB) {
-  return (
-    <div className="text-white p-10">
-      Loading players...
-    </div>
-  )
-}
   return (
     <div className="min-h-screen w-full bg-[#010806] text-slate-100 flex flex-col">
 
-      {/* NAVBAR */}
       <Navbar />
 
       <div className="flex flex-1 overflow-hidden">
 
-        {/* SIDEBAR */}
         <Sidebar />
 
-        {/* MAIN CONTENT */}
         <main className="flex-1 px-24 py-8 overflow-y-auto">
 
           <h1 className="text-xl font-semibold mb-6">
@@ -104,18 +103,23 @@ if (!teamA || !teamB) {
           </button>
 
           {/* Start Button */}
-          <div>
-            <button
-              disabled={!allSelected}
-              className={`px-8 py-3 rounded-md font-medium ${
-                allSelected
-                  ? "bg-emerald-500 text-black"
-                  : "bg-slate-700 text-slate-400"
-              }`}
-            >
-              START SCORING
-            </button>
-          </div>
+          <button
+  disabled={!allSelected}
+  onClick={() =>
+    navigate(`/scoring/${matchId}`, {
+      state: {
+        striker,
+        nonStriker,
+        bowler
+      }
+    })
+  }
+  className={`px-8 py-3 rounded-md ${
+    allSelected ? "bg-emerald-500 text-black" : "bg-slate-700"
+  }`}
+>
+  START SCORING
+</button>
 
         </main>
       </div>

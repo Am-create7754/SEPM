@@ -2,23 +2,19 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Navbar from "../components/navbar";
 import Sidebar from "../components/sidebar";
-import { getAllMatches } from "../utils/storage";
 
 export default function PlayMatch() {
-
-const { matchId } = useParams();
+  const { matchId } = useParams();
   const navigate = useNavigate();
 
-  const [match,setMatch] = useState(null);
+  const [match, setMatch] = useState(null);
 
-  const [matchType,setMatchType] = useState("limited");
-  const [overs,setOvers] = useState("");
-  const [ballsPerOver,setBallsPerOver] = useState(6);
-  const [powerplay,setPowerplay] = useState("");
-  const [ground,setGround] = useState("");
-  const [city,setCity] = useState("");
-  const [date,setDate] = useState("");
-  const [ballType,setBallType] = useState("white");
+  const [matchType, setMatchType] = useState("limited");
+  const [overs, setOvers] = useState("");
+  const [ballsPerOver, setBallsPerOver] = useState(6);
+  const [ground, setGround] = useState("");
+  const [city, setCity] = useState("");
+  const [ballType, setBallType] = useState("white");
 
   const grounds = [
     "Wankhede Stadium",
@@ -34,93 +30,103 @@ const { matchId } = useParams();
   ];
 
   useEffect(() => {
+    async function fetchMatch() {
+      try {
+        const res = await fetch(`http://localhost:5000/api/matches/${matchId}`);
+        const data = await res.json();
+        setMatch(data);
+      } catch (err) {
+        console.error("Error fetching match:", err);
+      }
+    }
 
-  async function fetchMatch() {
+    fetchMatch();
+  }, [matchId]);
+
+  // Ye function component ke andar bana
+  async function handleNext() {
     try {
-      const res = await fetch(`http://localhost:5000/api/matches/${matchId}`);
-      const data = await res.json();
-      setMatch(data);
+      await fetch(`http://localhost:5000/api/matches/${matchId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          setup: {
+            overs: Number(overs),
+            ground,
+            city,
+            ballType
+          }
+        })
+      });
+      navigate(`/match/${matchId}/toss`);
     } catch (err) {
-      console.error("Error fetching match:", err);
+      console.error(err);
     }
   }
-
-  fetchMatch();
-
-}, [matchId]);
-
 
   /* =========================
      MATCH TYPE AUTO BALL
   ========================== */
 
-  useEffect(()=>{
-
-    if(matchType === "test"){
+  useEffect(() => {
+    if (matchType === "test") {
       setBallType("red");
-    }else{
+    } else {
       setBallType("white");
     }
+  }, [matchType]);
 
-  },[matchType]);
-
+  // Powerplay aur date hata diya yahan se
   const isValid =
     overs &&
     ballsPerOver &&
-    powerplay &&
     ground &&
     city &&
-    date &&
     ballType;
 
   if (!match) return <div className="text-white p-10">Loading...</div>;
 
   return (
     <div className="min-h-screen w-full bg-[#010806] text-slate-100 flex flex-col">
-
-      <Navbar/>
+      <Navbar />
 
       <div className="flex flex-1 overflow-hidden">
-
-        <Sidebar/>
+        <Sidebar />
 
         <main className="flex-1 px-24 py-8 overflow-y-auto">
 
           {/* =========================
               TEAMS HEADER
           ========================== */}
-
           <div className="flex justify-between max-w-3xl mb-6">
-
             <div className="bg-black/40 border border-emerald-500/20 rounded-xl p-4 w-[45%] text-center">
-              <p className="text-emerald-300 font-medium">{match.teamA}</p>
-              <p className="text-xs text-slate-400 mt-1">Squad (11)</p>
+              <p className="text-emerald-300 font-medium">{match.teamA?.name}</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Squad ({match.teamA?.members?.length || 0})
+              </p>
             </div>
 
             <div className="bg-black/40 border border-emerald-500/20 rounded-xl p-4 w-[45%] text-center">
-              <p className="text-emerald-300 font-medium">{match.teamB}</p>
-              <p className="text-xs text-slate-400 mt-1">Squad (11)</p>
+              <p className="text-emerald-300 font-medium">{match.teamB?.name}</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Squad ({match.teamB?.members?.length || 0})
+              </p>
             </div>
-
           </div>
 
 
           {/* =========================
              MATCH SETUP CARD
           ========================== */}
-
           <div className="max-w-3xl rounded-xl border border-emerald-500/20 bg-gradient-to-br from-[#0a2a1f] via-[#062019] to-[#041511] p-6">
 
-
             {/* MATCH TYPE */}
-
             <div className="flex gap-6 mb-6 text-sm">
-
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
-                  checked={matchType==="limited"}
-                  onChange={()=>setMatchType("limited")}
+                  checked={matchType === "limited"}
+                  onChange={() => setMatchType("limited")}
                 />
                 Limited Overs
               </label>
@@ -128,8 +134,8 @@ const { matchId } = useParams();
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
-                  checked={matchType==="test"}
-                  onChange={()=>setMatchType("test")}
+                  checked={matchType === "test"}
+                  onChange={() => setMatchType("test")}
                 />
                 Test Match
               </label>
@@ -137,105 +143,71 @@ const { matchId } = useParams();
               <label className="flex items-center gap-2">
                 <input
                   type="radio"
-                  checked={matchType==="hundred"}
-                  onChange={()=>setMatchType("hundred")}
+                  checked={matchType === "hundred"}
+                  onChange={() => setMatchType("hundred")}
                 />
                 The Hundred
               </label>
-
             </div>
 
-
-            {/* OVERS */}
-
-            <div className="grid grid-cols-3 gap-4 mb-6">
-
+            {/* OVERS (Grid layout changed to 2 columns) */}
+            <div className="grid grid-cols-2 gap-4 mb-6">
               <input
                 placeholder="No. of Overs"
+                type="number"
                 value={overs}
-                onChange={(e)=>setOvers(e.target.value)}
-                className="px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm"
+                onChange={(e) => setOvers(e.target.value)}
+                className="px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm focus:outline-none focus:border-emerald-400"
               />
 
               <input
                 placeholder="Balls per Over"
+                type="number"
                 value={ballsPerOver}
-                onChange={(e)=>setBallsPerOver(e.target.value)}
-                className="px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm"
+                onChange={(e) => setBallsPerOver(e.target.value)}
+                className="px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm focus:outline-none focus:border-emerald-400"
               />
-
-              <input
-                placeholder="Powerplay Overs"
-                value={powerplay}
-                onChange={(e)=>setPowerplay(e.target.value)}
-                className="px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm"
-              />
-
             </div>
 
-
             {/* CITY */}
-
             <input
               placeholder="City / Town"
               value={city}
-              onChange={(e)=>setCity(e.target.value)}
-              className="w-full mb-4 px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm"
+              onChange={(e) => setCity(e.target.value)}
+              className="w-full mb-4 px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm focus:outline-none focus:border-emerald-400"
             />
-
 
             {/* GROUND */}
-
             <select
               value={ground}
-              onChange={(e)=>setGround(e.target.value)}
-              className="w-full mb-4 px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm"
+              onChange={(e) => setGround(e.target.value)}
+              className="w-full mb-6 px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm focus:outline-none focus:border-emerald-400"
             >
-
               <option className="bg-black" value="">Select Ground</option>
-
-              {grounds.map(g=>(
+              {grounds.map(g => (
                 <option className="bg-black" key={g}>{g}</option>
               ))}
-
             </select>
 
-
-            {/* DATE */}
-
-            <input
-              type="datetime-local"
-              value={date}
-              onChange={(e)=>setDate(e.target.value)}
-              className="w-full mb-6 px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm"
-            />
-
-
             {/* BALL TYPE */}
-
             <div className="flex items-center gap-4 mb-6">
-
               <p className="text-sm text-slate-300">Ball Type</p>
 
-              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${ballType==="white" ? "border-emerald-400":"border-slate-500"}`}>
+              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${ballType === "white" ? "border-emerald-400" : "border-slate-500"}`}>
                 ⚪
               </div>
 
-              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${ballType==="red" ? "border-emerald-400":"border-slate-500"}`}>
+              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${ballType === "red" ? "border-emerald-400" : "border-slate-500"}`}>
                 🔴
               </div>
-
             </div>
 
-
             {/* NEXT BUTTON */}
-
             <button
               disabled={!isValid}
-              onClick={()=>navigate(`/match/${matchId}/toss`)}
-              className={`w-full py-3 rounded-lg text-sm font-medium
-                ${
-                  isValid
+              onClick={handleNext}
+              className={`w-full py-3 rounded-lg text-sm font-medium transition-colors
+                ${isValid
                   ? "bg-emerald-500 text-black hover:bg-emerald-400"
                   : "bg-slate-700 text-slate-400 cursor-not-allowed"
                 }
@@ -244,14 +216,9 @@ const { matchId } = useParams();
               Next (Toss)
             </button>
 
-
           </div>
-
-
         </main>
-
       </div>
-
     </div>
   );
 }
