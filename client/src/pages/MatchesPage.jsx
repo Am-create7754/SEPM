@@ -12,7 +12,7 @@ export default function MatchesPage() {
     async function fetchAllMatches() {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/matches", {
+        const res = await fetch("http://localhost:5001/api/matches", {
           headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
@@ -28,7 +28,7 @@ export default function MatchesPage() {
     if (!window.confirm("Bhai sach me delete karna hai ye match?")) return;
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/matches/${id}`, {
+      await fetch(`http://localhost:5001/api/matches/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
@@ -42,7 +42,7 @@ export default function MatchesPage() {
     if (!window.confirm("Is match ko cancel karna hai?")) return;
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/matches/${id}`, {
+      await fetch(`http://localhost:5001/api/matches/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export default function MatchesPage() {
       const user = JSON.parse(localStorage.getItem("user"));
       if (!user) return alert("User id nahi mili localStorage me!");
 
-      await axios.put("http://localhost:5000/api/auth/update-stats", {
+      await axios.put("http://localhost:5001/api/auth/update-stats", {
         playerId: user._id,
         runs: runs,
         wickets: wickets

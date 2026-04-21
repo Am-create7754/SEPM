@@ -16,7 +16,7 @@ export default function CreateTournamentPage() {
   ========================= */
   useEffect(() => {
     const token = localStorage.getItem("token");
-    fetch("http://localhost:5000/api/teams", {
+    fetch("http://localhost:5001/api/teams", {
       headers: { "Authorization": `Bearer ${token}` }
     })
       .then(res => res.json())
@@ -52,7 +52,7 @@ export default function CreateTournamentPage() {
 
     try {
       const token = localStorage.getItem("token");
-      await fetch("http://localhost:5000/api/tournaments", {
+      await fetch("http://localhost:5001/api/tournaments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

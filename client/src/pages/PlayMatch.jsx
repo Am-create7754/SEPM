@@ -32,7 +32,7 @@ export default function PlayMatch() {
   useEffect(() => {
     async function fetchMatch() {
       try {
-        const res = await fetch(`http://localhost:5000/api/matches/${matchId}`);
+        const res = await fetch(`http://localhost:5001/api/matches/${matchId}`);
         const data = await res.json();
         setMatch(data);
       } catch (err) {
@@ -46,7 +46,7 @@ export default function PlayMatch() {
   // Ye function component ke andar bana
   async function handleNext() {
     try {
-      await fetch(`http://localhost:5000/api/matches/${matchId}`, {
+      await fetch(`http://localhost:5001/api/matches/${matchId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

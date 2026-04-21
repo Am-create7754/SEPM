@@ -22,7 +22,7 @@ const handleSubmit = async (e) => {
 
   try {
     // 🔥 Full URL use kar taaki koi confusion na rahe
-    const res = await axios.post("http://localhost:5000/api/admin/profile", profileData, {
+    const res = await axios.post("http://localhost:5001/api/admin/profile", profileData, {
       headers: { 
         Authorization: `Bearer ${localStorage.getItem("token")}` 
       }

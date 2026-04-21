@@ -19,7 +19,7 @@ export default function TournamentDetailsPage() {
   async function fetchTournament() {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/tournaments/${id}`, {
+      const res = await fetch(`http://localhost:5001/api/tournaments/${id}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
@@ -44,7 +44,7 @@ export default function TournamentDetailsPage() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/matches", {
+      const res = await fetch("http://localhost:5001/api/matches", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,7 +81,7 @@ export default function TournamentDetailsPage() {
 
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/matches/${matchId}`, {
+      await fetch(`http://localhost:5001/api/matches/${matchId}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });

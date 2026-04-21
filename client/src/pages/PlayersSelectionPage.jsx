@@ -26,7 +26,7 @@ const navigate = useNavigate();
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(`http://localhost:5000/api/matches/${matchId}`);
+        const res = await fetch(`http://localhost:5001/api/matches/${matchId}`);
         const match = await res.json();
 
         // 🔥 DIRECT USE (NO FIND)

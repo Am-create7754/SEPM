@@ -14,7 +14,7 @@ export default function SignupPage() {
     console.log("Attempting signup with:", { name, email, role }); // Debugging
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/register", { 
+      const res = await axios.post("http://127.0.0.1:5001/api/auth/register", { 
         name, 
         email, 
         password, 

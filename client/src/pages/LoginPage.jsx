@@ -11,7 +11,7 @@ export default function LoginPage() {
     e.preventDefault();
     try {
       // 🔥 Backend API hit kar rahe hain
-      const res = await axios.post("http://localhost:5000/api/auth/login", { email, password });
+      const res = await axios.post("http://127.0.0.1:5001/api/auth/login", { email, password });
       
       // Token aur user info save karo
       localStorage.setItem("token", res.data.token);

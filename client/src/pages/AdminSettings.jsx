@@ -31,11 +31,11 @@ export default function AdminSettings() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const profileRes = await axios.get("http://localhost:5000/api/admin/profile", {
+        const profileRes = await axios.get("http://localhost:5001/api/admin/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const settingsRes = await axios.get("http://localhost:5000/api/admin/settings", {
+        const settingsRes = await axios.get("http://localhost:5001/api/admin/settings", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -57,7 +57,7 @@ export default function AdminSettings() {
 
   const updateProfile = async () => {
     try {
-      await axios.put("http://localhost:5000/api/admin/profile", profile, {
+      await axios.put("http://localhost:5001/api/admin/profile", profile, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("Profile Updated Successfully ✅");
@@ -68,7 +68,7 @@ export default function AdminSettings() {
 
   const updateSettings = async () => {
     try {
-      await axios.put("http://localhost:5000/api/admin/settings", settings, {
+      await axios.put("http://localhost:5001/api/admin/settings", settings, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert("Settings Updated Successfully ✅");
@@ -85,7 +85,7 @@ export default function AdminSettings() {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete("http://localhost:5000/api/admin/delete-all-tournaments", {
+      await axios.delete("http://localhost:5001/api/admin/delete-all-tournaments", {
         headers: { Authorization: `Bearer ${token}` },
       });
 

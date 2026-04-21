@@ -47,7 +47,7 @@ export default function ScoringPage() {
   /* FETCH MATCH */
   useEffect(() => {
     async function fetchMatch() {
-      const res = await fetch(`http://localhost:5000/api/matches/${matchId}`);
+      const res = await fetch(`http://localhost:5001/api/matches/${matchId}`);
       const data = await res.json();
       setMatch(data);
 
@@ -103,7 +103,7 @@ export default function ScoringPage() {
       }
     }
 
-    await fetch(`http://localhost:5000/api/matches/${matchId}/complete`, {
+    await fetch(`http://localhost:5001/api/matches/${matchId}/complete`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

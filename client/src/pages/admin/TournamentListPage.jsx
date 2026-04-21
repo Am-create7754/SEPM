@@ -25,7 +25,7 @@ export default function TournamentListPage() {
   async function fetchTournaments() {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/tournaments", {
+      const res = await fetch("http://localhost:5001/api/tournaments", {
         headers: {
           "Authorization": `Bearer ${token}`
         }
@@ -65,7 +65,7 @@ export default function TournamentListPage() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/tournaments/${id}`, {
+      const res = await fetch(`http://localhost:5001/api/tournaments/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`

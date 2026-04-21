@@ -19,8 +19,8 @@ export default function DashboardPage() {
       try {
         const token = localStorage.getItem("token");
         const [tournRes, matchRes] = await Promise.all([
-          fetch("http://localhost:5000/api/tournaments", { headers: { Authorization: `Bearer ${token}` } }),
-          fetch("http://localhost:5000/api/matches", { headers: { Authorization: `Bearer ${token}` } })
+          fetch("http://localhost:5001/api/tournaments", { headers: { Authorization: `Bearer ${token}` } }),
+          fetch("http://localhost:5001/api/matches", { headers: { Authorization: `Bearer ${token}` } })
         ]);
         
         const tournData = await tournRes.json();

@@ -18,7 +18,7 @@ export default function ManageTeamPage() {
   async function fetchTeam() {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:5000/api/teams/${id}`, {
+      const res = await fetch(`http://localhost:5001/api/teams/${id}`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
@@ -40,7 +40,7 @@ export default function ManageTeamPage() {
 
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/teams/${id}/add-player`, {
+      await fetch(`http://localhost:5001/api/teams/${id}/add-player`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export default function ManageTeamPage() {
   async function addMyself() {
     try {
       const token = localStorage.getItem("token");
-      const userRes = await fetch("http://localhost:5000/api/admin/profile", {
+      const userRes = await fetch("http://localhost:5001/api/admin/profile", {
         headers: { "Authorization": `Bearer ${token}` }
       });
 
@@ -81,7 +81,7 @@ export default function ManageTeamPage() {
         return;
       }
 
-      const res = await fetch(`http://localhost:5000/api/teams/${id}/add-player`, {
+      const res = await fetch(`http://localhost:5001/api/teams/${id}/add-player`, {
         method: "PUT",
         headers: { 
           "Content-Type": "application/json",
@@ -112,7 +112,7 @@ export default function ManageTeamPage() {
   async function removePlayer(index) {
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/teams/${id}/remove-player`, {
+      await fetch(`http://localhost:5001/api/teams/${id}/remove-player`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -137,7 +137,7 @@ export default function ManageTeamPage() {
 
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/teams/${id}`, {
+      await fetch(`http://localhost:5001/api/teams/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });

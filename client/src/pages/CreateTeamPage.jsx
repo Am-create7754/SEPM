@@ -19,7 +19,7 @@ export default function CreateTeamPage() {
   async function fetchTeams() {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/teams", {
+      const res = await fetch("http://localhost:5001/api/teams", {
         headers: { "Authorization": `Bearer ${token}` }
       });
       const data = await res.json();
@@ -46,7 +46,7 @@ export default function CreateTeamPage() {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:5000/api/teams", {
+      const res = await fetch("http://localhost:5001/api/teams", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -62,13 +62,13 @@ export default function CreateTeamPage() {
       if (includeMyself) {
         const token = localStorage.getItem("token");
         try {
-          const userRes = await fetch("http://localhost:5000/api/admin/profile", {
+          const userRes = await fetch("http://localhost:5001/api/admin/profile", {
             headers: { "Authorization": `Bearer ${token}` }
           });
           if (userRes.ok) {
             const userData = await userRes.json();
             if (userData.name && userData.playerRole) {
-              await fetch(`http://localhost:5000/api/teams/${newTeam._id}/add-player`, {
+              await fetch(`http://localhost:5001/api/teams/${newTeam._id}/add-player`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name: userData.name, role: userData.playerRole })
@@ -100,7 +100,7 @@ export default function CreateTeamPage() {
 
     try {
       const token = localStorage.getItem("token");
-      await fetch(`http://localhost:5000/api/teams/${id}`, {
+      await fetch(`http://localhost:5001/api/teams/${id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${token}` }
       });
