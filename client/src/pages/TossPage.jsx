@@ -34,15 +34,25 @@ export default function TossPage() {
   // Ye function component ke andar bana
   async function handlePlay() {
     try {
+      const isTeamB = winner._id === match.teamB._id;
+      const needsSwap = (isTeamB && decision === "bat") || (!isTeamB && decision === "bowl");
+
+      const updateData = {
+        toss: { 
+          winner: winner.name, 
+          decision 
+        }
+      };
+
+      if (needsSwap) {
+        updateData.teamA = match.teamB._id;
+        updateData.teamB = match.teamA._id;
+      }
+
       await fetch(`http://localhost:5001/api/matches/${matchId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          toss: { 
-            winner: winner.name, 
-            decision 
-          }
-        })
+        body: JSON.stringify(updateData)
       });
       navigate(`/player-selection/${matchId}`);
     } catch (err) {

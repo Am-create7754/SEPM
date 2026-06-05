@@ -117,6 +117,34 @@ export default function ScoringPage() {
       })
     });
 
+    // Automatically update the logged-in user's stats
+    try {
+      const userStr = localStorage.getItem("user");
+      if (userStr) {
+        const userObj = JSON.parse(userStr);
+        const userRuns = batStats[userObj.name]?.runs || 0;
+        const userWickets = bowlStats[userObj.name]?.wickets || 0;
+
+        if (userRuns > 0 || userWickets > 0) {
+          const token = localStorage.getItem("token");
+          await fetch("http://localhost:5001/api/auth/update-stats", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              playerId: userObj._id,
+              runs: userRuns,
+              wickets: userWickets
+            })
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Failed to sync user stats automatically:", err);
+    }
+
     const winnerName = matchWinner === match.teamA._id ? match.teamA.name : match.teamB.name;
     alert(`Match Finished 🏆 ${winnerName} won`);
     navigate("/matches");
@@ -135,7 +163,6 @@ export default function ScoringPage() {
     setAvailableBowlers(match.teamA.members);
     
     setStriker(null); setNonStriker(null); setBowler(null);
-    setBatStats({}); setBowlStats({});
     setInning(2);
     setShowBatsmanModal(true);
   }

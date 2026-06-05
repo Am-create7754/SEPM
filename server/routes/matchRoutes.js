@@ -1,6 +1,7 @@
 import express from "express";
 import Match from "../models/Match.js";
 import Tournament from "../models/Tournament.js";
+import Team from "../models/Team.js";
 import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
@@ -10,11 +11,22 @@ const router = express.Router();
 ========================= */
 router.get("/", protect, async (req, res) => {
   try {
-    // Migrate: Only fetch matches for this user
-    const matches = await Match.find({ createdBy: req.user._id })
+    // Pehle user ki teams nikalo
+    const myTeams = await Team.find({ createdBy: req.user._id }).select('_id');
+    const myTeamIds = myTeams.map(t => t._id);
+
+    // Ab wo matches fetch karo jo ya toh user ne khud create kiye hain
+    // YA phir user ki koi team us match mein khel rahi hai
+    const matches = await Match.find({
+      $or: [
+        { createdBy: req.user._id },
+        { teamA: { $in: myTeamIds } },
+        { teamB: { $in: myTeamIds } }
+      ]
+    })
       .populate("teamA")
       .populate("teamB")
-      .sort({ createdAt: -1 }); // Latest matches pehle dikhenge
+      .sort({ createdAt: -1 });
 
     res.json(matches);
   } catch (err) {

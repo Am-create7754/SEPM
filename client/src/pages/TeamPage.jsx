@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Navbar from '../components/navbar';
 import Sidebar from '../components/sidebar';
-import { Trash2, Users, Plus, LogIn, UserPlus } from 'lucide-react';
+import { Trash2, Users, Plus, UserPlus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function MyTeamPage() {

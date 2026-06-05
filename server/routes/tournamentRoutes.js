@@ -91,16 +91,21 @@ router.post("/:id/join", protect, async (req, res) => {
     if (!tournament) return res.status(404).json({ message: "Tournament not found" });
 
     // Check if team already requested or joined
-    const alreadyRequested = tournament.joinRequests.find(r => r.team.toString() === teamId);
+    const joinReqs = tournament.joinRequests || [];
+    const alreadyRequested = joinReqs.find(r => r.team?.toString() === teamId);
     if (alreadyRequested) {
       return res.status(400).json({ message: `Your team request is already ${alreadyRequested.status}` });
     }
 
-    const alreadyJoined = tournament.teams.find(t => t.toString() === teamId);
+    const tms = tournament.teams || [];
+    const alreadyJoined = tms.find(t => t?.toString() === teamId);
     if (alreadyJoined) {
       return res.status(400).json({ message: "Your team is already in this tournament" });
     }
 
+    if (!tournament.joinRequests) {
+      tournament.joinRequests = [];
+    }
     tournament.joinRequests.push({ team: teamId, status: "pending" });
     await tournament.save();
 

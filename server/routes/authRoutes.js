@@ -9,7 +9,7 @@ const router = express.Router();
 // @route   POST /api/auth/register
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, role, playerRole } = req.body;
 
     // Check if user exists
     const userExists = await User.findOne({ email });
@@ -27,6 +27,7 @@ router.post("/register", async (req, res) => {
       email,
       password: hashedPassword,
       role: role || "player",
+      playerRole: playerRole || "none",
     });
 
     if (user) {
@@ -35,6 +36,7 @@ router.post("/register", async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
+        playerRole: user.playerRole,
       });
     }
   } catch (error) {
@@ -66,6 +68,7 @@ router.post("/login", async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
+          playerRole: user.playerRole,
         },
       });
     } else {

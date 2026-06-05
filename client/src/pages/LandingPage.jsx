@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Trophy, Activity, Users, ChevronRight, ShieldCheck, Zap } from "lucide-react";
+import { Trophy, Activity, ChevronRight, ShieldCheck, Zap } from "lucide-react";
 
 export default function LandingPage() {
   const navigate = useNavigate();

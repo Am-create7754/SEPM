@@ -12,8 +12,6 @@ export default function CreateProfilePage() {
   const [bowling, setBowling] = useState('pace');
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
-
   // CreateProfilePage.jsx ke handleSubmit mein:
 
 const handleSubmit = async (e) => {

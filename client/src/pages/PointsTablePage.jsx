@@ -36,6 +36,15 @@ export default function PointsTablePage() {
 
     const tableMap = {};
     
+    // Helper to convert 1.2 overs to 1 + 2/6
+    const parseOvers = (overVal) => {
+      if (!overVal) return 0;
+      const num = Number(overVal);
+      const fullOvers = Math.floor(num);
+      const balls = Math.round((num - fullOvers) * 10);
+      return fullOvers + (balls / 6);
+    };
+
     // Initialize points table template with all tournament teams
     tournament.teams.forEach(t => {
       const id = t._id?.toString() || t.toString();
@@ -45,7 +54,12 @@ export default function PointsTablePage() {
         played: 0, 
         won: 0, 
         lost: 0, 
-        points: 0 
+        points: 0,
+        totalRunsScored: 0,
+        totalOversFaced: 0,
+        totalRunsConceded: 0,
+        totalOversBowled: 0,
+        nrr: 0
       };
     });
 
@@ -56,6 +70,50 @@ export default function PointsTablePage() {
           const taId = (m.teamA?._id || m.teamA)?.toString();
           const tbId = (m.teamB?._id || m.teamB)?.toString();
           const wId = (m.winner?._id || m.winner)?.toString();
+          
+          const totalOvers = m.setup?.overs || 2;
+
+          // Team A stats
+          if (taId && tableMap[taId] && m.score?.inning1) {
+            const i1Runs = m.score.inning1.runs || 0;
+            const i1Wickets = m.score.inning1.wickets || 0;
+            const i1OversRaw = m.score.inning1.overs || 0;
+            const i1Overs = i1Wickets >= 10 ? totalOvers : parseOvers(i1OversRaw);
+
+            tableMap[taId].totalRunsScored += i1Runs;
+            tableMap[taId].totalOversFaced += i1Overs;
+
+            if (m.score?.inning2) {
+              const i2Runs = m.score.inning2.runs || 0;
+              const i2Wickets = m.score.inning2.wickets || 0;
+              const i2OversRaw = m.score.inning2.overs || 0;
+              const i2Overs = i2Wickets >= 10 ? totalOvers : parseOvers(i2OversRaw);
+              
+              tableMap[taId].totalRunsConceded += i2Runs;
+              tableMap[taId].totalOversBowled += i2Overs;
+            }
+          }
+
+          // Team B stats
+          if (tbId && tableMap[tbId] && m.score?.inning2) {
+            const i2Runs = m.score.inning2.runs || 0;
+            const i2Wickets = m.score.inning2.wickets || 0;
+            const i2OversRaw = m.score.inning2.overs || 0;
+            const i2Overs = i2Wickets >= 10 ? totalOvers : parseOvers(i2OversRaw);
+
+            tableMap[tbId].totalRunsScored += i2Runs;
+            tableMap[tbId].totalOversFaced += i2Overs;
+
+            if (m.score?.inning1) {
+              const i1Runs = m.score.inning1.runs || 0;
+              const i1Wickets = m.score.inning1.wickets || 0;
+              const i1OversRaw = m.score.inning1.overs || 0;
+              const i1Overs = i1Wickets >= 10 ? totalOvers : parseOvers(i1OversRaw);
+
+              tableMap[tbId].totalRunsConceded += i1Runs;
+              tableMap[tbId].totalOversBowled += i1Overs;
+            }
+          }
 
           [taId, tbId].forEach(teamId => {
             if (teamId && tableMap[teamId]) {
@@ -72,9 +130,17 @@ export default function PointsTablePage() {
       });
     }
 
-    return Object.values(tableMap)
+    const finalTable = Object.values(tableMap).map(team => {
+      const sr = team.totalOversFaced > 0 ? (team.totalRunsScored / team.totalOversFaced) : 0;
+      const cr = team.totalOversBowled > 0 ? (team.totalRunsConceded / team.totalOversBowled) : 0;
+      team.nrr = sr - cr;
+      return team;
+    });
+
+    return finalTable
       .sort((a, b) => {
         if (b.points !== a.points) return b.points - a.points;
+        if (b.nrr !== a.nrr) return b.nrr - a.nrr;
         if (b.won !== a.won) return b.won - a.won;
         return 0; 
       })
@@ -135,6 +201,7 @@ export default function PointsTablePage() {
                     <th className="text-center">P</th>
                     <th className="text-center">W</th>
                     <th className="text-center">L</th>
+                    <th className="text-center">NRR</th>
                     <th className="w-16 pr-5 text-center">Pts</th>
                   </tr>
                 </thead>
@@ -158,6 +225,7 @@ export default function PointsTablePage() {
                       <td className="text-center">{row.played}</td>
                       <td className="text-center text-emerald-400">{row.won}</td>
                       <td className="text-center text-red-400">{row.lost}</td>
+                      <td className="text-center text-emerald-200">{row.nrr > 0 ? `+${row.nrr.toFixed(3)}` : row.nrr.toFixed(3)}</td>
                       <td className="pr-5 text-center font-semibold">{row.points}</td>
                     </tr>
                   ))}

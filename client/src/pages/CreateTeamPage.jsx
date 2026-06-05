@@ -67,11 +67,11 @@ export default function CreateTeamPage() {
           });
           if (userRes.ok) {
             const userData = await userRes.json();
-            if (userData.name && userData.playerRole) {
+            if (userData.name) {
               await fetch(`http://localhost:5001/api/teams/${newTeam._id}/add-player`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name: userData.name, role: userData.playerRole })
+                body: JSON.stringify({ name: userData.name, role: userData.playerRole || "batsman" })
               });
             }
           }

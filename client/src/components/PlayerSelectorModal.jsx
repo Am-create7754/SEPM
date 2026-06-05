@@ -6,42 +6,44 @@ export default function PlayerSelectorModal({ players = [], onSelect, onClose, e
   });
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-[#010806]/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-[#062019] p-6 rounded-2xl border border-emerald-500/30 min-w-[320px] shadow-[0_0_40px_rgba(16,185,129,0.1)] relative">
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 text-emerald-500/50 hover:text-emerald-400"
+        >
+          ✕
+        </button>
 
-      <div className="bg-[#020a08] border border-emerald-500/30 rounded-lg w-80 max-h-[400px] overflow-y-auto">
-
-        <div className="p-3 border-b border-emerald-500/20 text-sm font-semibold">
+        <h2 className="text-xl font-bold text-emerald-400 mb-5 text-center">
           Select Player
+        </h2>
+
+        <div className="max-h-72 overflow-y-auto pr-2 space-y-2">
+          {filtered.map((player, i) => {
+            const name = typeof player === "string" ? player : player.name;
+            const role = typeof player === "string" ? "" : player.role;
+
+            return (
+              <button
+                key={i}
+                onClick={() => {
+                  onSelect(player);
+                  onClose();
+                }}
+                className="block w-full text-left p-4 bg-[#0a2a1f] border border-emerald-500/20 hover:border-emerald-500/60 hover:bg-emerald-500/10 rounded-xl transition-all text-emerald-50 font-medium"
+              >
+                {name}
+                {role && (
+                  <span className="text-xs text-slate-400 ml-2 font-normal">
+                    ({role})
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
-
-        {filtered.map((player, i) => {
-
-          const name = typeof player === "string" ? player : player.name;
-          const role = typeof player === "string" ? "" : player.role;
-
-          return (
-            <div
-              key={i}
-              onClick={() => {
-                onSelect(player);
-                onClose();
-              }}
-              className="px-4 py-2 text-sm cursor-pointer hover:bg-emerald-500/10 border-b border-emerald-500/10"
-            >
-              {name}
-
-              {role && (
-                <span className="text-xs text-slate-400 ml-2">
-                  ({role})
-                </span>
-              )}
-
-            </div>
-          );
-        })}
-
       </div>
-
     </div>
   );
 }

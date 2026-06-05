@@ -7,6 +7,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("player");
+  const [playerRole, setPlayerRole] = useState("batsman");
   const navigate = useNavigate();
 
   async function handleSignup(e) {
@@ -18,7 +19,8 @@ export default function SignupPage() {
         name,
         email,
         password,
-        role
+        role,
+        playerRole
       });
 
       console.log("Signup Response:", res.data);
@@ -86,6 +88,20 @@ export default function SignupPage() {
             >
               <option value="player">Player (Wants to play)</option>
               <option value="organiser">Organiser (Wants to host)</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="text-[10px] font-bold text-emerald-500/50 uppercase ml-1">Player Style</label>
+            <select
+              value={playerRole}
+              onChange={(e) => setPlayerRole(e.target.value)}
+              className="w-full px-4 py-3 bg-[#050505] border border-emerald-500/10 rounded-xl text-sm focus:border-emerald-500/50 outline-none transition-all appearance-none text-emerald-100"
+            >
+              <option value="batsman">Batsman</option>
+              <option value="bowler">Bowler</option>
+              <option value="allrounder">All-Rounder</option>
+              <option value="wicket-keeper">Wicket-Keeper</option>
             </select>
           </div>
         </div>

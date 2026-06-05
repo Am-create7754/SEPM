@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios"; // 🔥 Axios import kiya
 import Navbar from "../components/navbar";
 import Sidebar from "../components/sidebar";
-import { Filter, MapPin, Trash2, XCircle, TrendingUp } from "lucide-react";
+import { Filter, MapPin, Trash2, XCircle } from "lucide-react";
 
 export default function MatchesPage() {
   const [matches, setMatches] = useState([]);
@@ -58,23 +57,7 @@ export default function MatchesPage() {
     }
   }
 
-  // 🔥 Profile Update Function
-  async function updateMyProfileStats(runs, wickets) {
-    try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      if (!user) return alert("User id nahi mili localStorage me!");
 
-      await axios.put("http://localhost:5001/api/auth/update-stats", {
-        playerId: user._id,
-        runs: runs,
-        wickets: wickets
-      });
-      alert(`Profile Updated: +${runs} Runs, +${wickets} Wickets ✅`);
-    } catch (err) {
-      console.error("Error updating stats", err);
-      alert("Backend route update-stats check kar");
-    }
-  }
 
   const filteredMatches =
     activeFilter === "all"
@@ -125,7 +108,6 @@ export default function MatchesPage() {
                   statusColor={getStatusColor(matchData.status || "upcoming")}
                   onDelete={() => deleteMatch(matchData._id)}
                   onCancel={() => cancelMatch(matchData._id)}
-                  onUpdateStats={updateMyProfileStats} // 🔥 Function pass kiya
                 />
               ))}
             </div>
@@ -142,7 +124,7 @@ export default function MatchesPage() {
 /* =======================
    Match Card Component
 ======================= */
-function MatchCard({ m, statusColor, onDelete, onCancel, onUpdateStats }) {
+function MatchCard({ m, statusColor, onDelete, onCancel }) {
   const showScore = m.status?.toLowerCase() === "live" || m.status?.toLowerCase() === "completed";
   const teamAName = m.teamA?.name || "Team A";
   const teamBName = m.teamB?.name || "Team B";
@@ -158,17 +140,7 @@ function MatchCard({ m, statusColor, onDelete, onCancel, onUpdateStats }) {
   const canCancel = m.status?.toLowerCase() !== "completed" && m.status?.toLowerCase() !== "cancelled";
   const hasInning2Started = inning2 && (inning2.runs > 0 || inning2.overs > 0 || m.status?.toLowerCase() === "completed");
 
-  // 🔥 Naya function: Ab ye tujhse runs aur wickets poochega
-  const handleSyncClick = () => {
-    const userRuns = window.prompt("Is match mein aapne kitne RUNS banaye?", "0");
-    if (userRuns === null) return; // Agar cancel daba diya toh ruk jao
 
-    const userWickets = window.prompt("Is match mein aapne kitne WICKETS liye?", "0");
-    if (userWickets === null) return;
-
-    // Jo number tune daala, wo backend ko bhej dega
-    onUpdateStats(Number(userRuns), Number(userWickets));
-  };
 
   return (
     <div className="flex flex-col justify-between rounded-xl bg-gradient-to-br from-[#0a2a1f] via-[#062019] to-[#041511] border border-emerald-500/20 px-5 py-4 shadow-[0_0_30px_rgba(16,185,129,0.10)]">
@@ -223,16 +195,6 @@ function MatchCard({ m, statusColor, onDelete, onCancel, onUpdateStats }) {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* 🔥 Button Update Kar Diya */}
-          {m.status?.toLowerCase() === "completed" && (
-            <button
-              onClick={handleSyncClick}
-              className="flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 transition-colors"
-            >
-              <TrendingUp size={14} /> Sync Stats
-            </button>
-          )}
-
           {canCancel && (
             <button onClick={onCancel} className="flex items-center gap-1 text-[11px] text-orange-400 hover:text-orange-300 transition-colors">
               <XCircle size={14} /> Cancel

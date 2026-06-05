@@ -59,6 +59,7 @@ export default function TournamentDetailsPage() {
       fetchTournament();
       fetchMyTeams();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   /* =========================
@@ -183,6 +184,16 @@ export default function TournamentDetailsPage() {
     return <div className="text-white p-10">Loading...</div>;
   }
 
+  const myApprovedTeams = myTeams.filter(myT => 
+    tournament?.teams?.some(t => t._id === myT._id)
+  );
+  const hasApprovedTeam = myApprovedTeams.length > 0;
+  const canScheduleMatches = isAllowed || hasApprovedTeam;
+
+  const displayedMatches = isAllowed 
+    ? tournament.matches 
+    : tournament.matches.filter(m => m.status !== "completed");
+
   return (
     <div className="min-h-screen w-full bg-[#010806] text-slate-100 flex flex-col">
       <Navbar />
@@ -241,7 +252,7 @@ export default function TournamentDetailsPage() {
               {/* =========================
                  Schedule Match
               ========================= */}
-              {isAllowed && (
+              {canScheduleMatches && (
                 <div className="max-w-3xl rounded-xl border border-emerald-500/20 bg-black/40 p-6 mb-8">
                   <div className="flex items-center gap-2 mb-4">
                     <Calendar size={18} className="text-emerald-400" />
@@ -258,7 +269,7 @@ export default function TournamentDetailsPage() {
                       className="px-3 py-2 rounded-md bg-black border border-slate-800 text-sm"
                     >
                       <option value="">Team A</option>
-                      {tournament.teams.map(team => (
+                      {(!isAllowed ? myApprovedTeams : tournament.teams).map(team => (
                         <option key={team._id} value={team._id}>
                           {team.name}
                         </option>
@@ -272,7 +283,7 @@ export default function TournamentDetailsPage() {
                       className="px-3 py-2 rounded-md bg-black border border-slate-800 text-sm"
                     >
                       <option value="">Team B</option>
-                      {tournament.teams.map(team => (
+                      {tournament.teams.filter(t => t._id !== teamA).map(team => (
                         <option key={team._id} value={team._id}>
                           {team.name}
                         </option>
@@ -303,12 +314,12 @@ export default function TournamentDetailsPage() {
               ========================= */}
               <div className="max-w-3xl grid gap-4 mb-8">
                 <h2 className="text-sm font-medium text-emerald-300 mb-2">Matches</h2>
-                {tournament.matches.length === 0 ? (
+                {displayedMatches.length === 0 ? (
                   <div className="p-4 text-slate-400 bg-black/20 rounded-xl border border-slate-800">
                     No matches scheduled yet
                   </div>
                 ) : (
-                  tournament.matches.map((m) => (
+                  displayedMatches.map((m) => (
                     <div
                       key={m._id}
                       className="rounded-xl p-4 border bg-black/40 border-emerald-500/20"
