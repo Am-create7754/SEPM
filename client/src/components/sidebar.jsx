@@ -58,10 +58,9 @@ export default function Sidebar() {
               onClick={() => navigate(item.path)}
               className={`
                 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-all
-                ${
-                  active
-                    ? 'bg-emerald-500/15 text-emerald-200'
-                    : 'text-slate-400 hover:bg-emerald-500/10 hover:text-slate-200'
+                ${active
+                  ? 'bg-emerald-500/15 text-emerald-200'
+                  : 'text-slate-400 hover:bg-emerald-500/10 hover:text-slate-200'
                 }
               `}
             >
@@ -85,10 +84,9 @@ export default function Sidebar() {
           onClick={() => navigate('/profile')}
           className={`
             mt-2 w-full flex items-center gap-3 px-3 py-2 rounded-lg text-xs transition-all
-            ${
-              isProfileActive
-                ? 'bg-emerald-500/15 text-emerald-200'
-                : 'text-slate-400 hover:bg-emerald-500/10 hover:text-slate-200'
+            ${isProfileActive
+              ? 'bg-emerald-500/15 text-emerald-200'
+              : 'text-slate-400 hover:bg-emerald-500/10 hover:text-slate-200'
             }
           `}
         >
@@ -112,10 +110,9 @@ export default function Sidebar() {
             onClick={() => navigate('/profile/create')}
             className={`
               w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] transition-all
-              ${
-                location.pathname === '/profile/create'
-                  ? 'bg-emerald-500/10 text-emerald-300'
-                  : 'text-slate-500 hover:bg-emerald-500/10 hover:text-slate-300'
+              ${location.pathname === '/profile/create'
+                ? 'bg-emerald-500/10 text-emerald-300'
+                : 'text-slate-500 hover:bg-emerald-500/10 hover:text-slate-300'
               }
             `}
           >
@@ -127,10 +124,9 @@ export default function Sidebar() {
             onClick={() => navigate('/profile/team')}
             className={`
               w-full flex items-center gap-2 px-3 py-1.5 rounded-md text-[11px] transition-all
-              ${
-                location.pathname === '/profile/team'
-                  ? 'bg-emerald-500/10 text-emerald-300'
-                  : 'text-slate-500 hover:bg-emerald-500/10 hover:text-slate-300'
+              ${location.pathname === '/profile/team'
+                ? 'bg-emerald-500/10 text-emerald-300'
+                : 'text-slate-500 hover:bg-emerald-500/10 hover:text-slate-300'
               }
             `}
           >
@@ -144,11 +140,8 @@ export default function Sidebar() {
       {/* Footer */}
       <div className="px-3 pb-4">
         <div className="px-3 py-3 rounded-lg bg-black/40 border border-emerald-500/20">
-          <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+          <p className="text-[10px] text-center text-slate-400 uppercase tracking-wide">
             SEPM Project
-          </p>
-          <p className="text-[11px] text-slate-500 mt-1">
-            Software Engineering Project Management course demo.
           </p>
         </div>
       </div>

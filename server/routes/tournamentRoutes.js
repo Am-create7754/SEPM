@@ -7,8 +7,18 @@ const router = express.Router();
 // 1. GET ALL TOURNAMENTS
 router.get("/", protect, async (req, res) => {
   try {
-    // Only fetch tournaments created by the current user
-    const tournaments = await Tournament.find({ createdBy: req.user._id }).populate("teams matches");
+    let tournaments;
+    if (req.user.role === "player") {
+      // Players see all tournaments
+      tournaments = await Tournament.find({})
+        .populate("teams matches")
+        .populate("joinRequests.team");
+    } else {
+      // Organisers/Admins see their own tournaments
+      tournaments = await Tournament.find({ createdBy: req.user._id })
+        .populate("teams matches")
+        .populate("joinRequests.team");
+    }
     
     // Hamesha array bhejenge taaki frontend ka .map() kabhi na phate
     res.json(tournaments || []);
@@ -41,6 +51,7 @@ router.get("/:id", protect, async (req, res) => {
   try {
     const tournament = await Tournament.findById(req.params.id)
       .populate("teams")
+      .populate("joinRequests.team")
       .populate({
         path: "matches",
         populate: [
@@ -66,6 +77,72 @@ router.delete("/:id", protect, async (req, res) => {
     res.json({ message: "Tournament deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Error deleting tournament" });
+  }
+});
+
+// 5. JOIN TOURNAMENT (REQUEST)
+router.post("/:id/join", protect, async (req, res) => {
+  try {
+    const { teamId } = req.body;
+    
+    if (!teamId) return res.status(400).json({ message: "Team ID is required" });
+
+    const tournament = await Tournament.findById(req.params.id);
+    if (!tournament) return res.status(404).json({ message: "Tournament not found" });
+
+    // Check if team already requested or joined
+    const alreadyRequested = tournament.joinRequests.find(r => r.team.toString() === teamId);
+    if (alreadyRequested) {
+      return res.status(400).json({ message: `Your team request is already ${alreadyRequested.status}` });
+    }
+
+    const alreadyJoined = tournament.teams.find(t => t.toString() === teamId);
+    if (alreadyJoined) {
+      return res.status(400).json({ message: "Your team is already in this tournament" });
+    }
+
+    tournament.joinRequests.push({ team: teamId, status: "pending" });
+    await tournament.save();
+
+    res.json({ message: "Join request sent successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error sending join request", error: error.message });
+  }
+});
+
+// 6. APPROVE/REJECT JOIN REQUEST
+router.put("/:id/requests/:requestId", protect, async (req, res) => {
+  try {
+    const { status } = req.body; // "approved" or "rejected"
+    
+    if (!["approved", "rejected"].includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
+
+    const tournament = await Tournament.findById(req.params.id);
+    if (!tournament) return res.status(404).json({ message: "Tournament not found" });
+
+    // Only creator can approve/reject
+    if (tournament.createdBy.toString() !== req.user._id.toString() && req.user.role !== "superadmin") {
+      return res.status(403).json({ message: "Not authorized to manage this tournament" });
+    }
+
+    const request = tournament.joinRequests.id(req.params.requestId);
+    if (!request) return res.status(404).json({ message: "Request not found" });
+
+    request.status = status;
+
+    // If approved, add team to tournament teams array
+    if (status === "approved") {
+      if (!tournament.teams.includes(request.team)) {
+        tournament.teams.push(request.team);
+      }
+    }
+
+    await tournament.save();
+    res.json({ message: `Request ${status} successfully` });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating request status", error: error.message });
   }
 });
 

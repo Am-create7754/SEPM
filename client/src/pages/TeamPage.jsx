@@ -77,13 +77,7 @@ export default function MyTeamPage() {
               </p>
 
               <div className="flex gap-3">
-                <Link
-                  to="/join-team"
-                  className="px-4 py-2 rounded-md bg-emerald-500/20 border border-emerald-500 text-emerald-300 hover:bg-emerald-500/30 transition flex items-center gap-2"
-                >
-                  <LogIn size={14} />
-                  Join Team
-                </Link>
+
 
                 <Link
                   to="/create-team"

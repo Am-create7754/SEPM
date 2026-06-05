@@ -25,7 +25,7 @@ export default function MatchesPage() {
   }, []);
 
   async function deleteMatch(id) {
-    if (!window.confirm("Bhai sach me delete karna hai ye match?")) return;
+    if (!window.confirm("Do You Really Want to Delete This Match?")) return;
     try {
       const token = localStorage.getItem("token");
       await fetch(`http://localhost:5001/api/matches/${id}`, {

@@ -20,6 +20,14 @@ const tournamentSchema = new mongoose.Schema({
     }
   ],
 
+  joinRequests: [
+    {
+      team: { type: mongoose.Schema.Types.ObjectId, ref: "Team" },
+      status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+      requestedAt: { type: Date, default: Date.now }
+    }
+  ],
+
   matches: [
     {
       type: mongoose.Schema.Types.ObjectId,

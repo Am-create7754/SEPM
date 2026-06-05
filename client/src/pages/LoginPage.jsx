@@ -12,13 +12,13 @@ export default function LoginPage() {
     try {
       // 🔥 Backend API hit kar rahe hain
       const res = await axios.post("http://127.0.0.1:5001/api/auth/login", { email, password });
-      
+
       // Token aur user info save karo
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
       alert("Login Successful ✅");
-      navigate("/"); 
+      navigate("/");
       window.location.reload(); // Taaki navbar/sidebar update ho jaye
     } catch (err) {
       alert(err.response?.data?.message || "Invalid credentials ❌");
@@ -27,29 +27,44 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#010806] text-white">
-      <form onSubmit={handleLogin} className="w-80 bg-black border border-emerald-500/20 p-6 rounded-xl space-y-4 shadow-2xl">
-        <h2 className="text-xl font-bold text-center text-emerald-500">Login</h2>
-        <input
-          type="email"
-          placeholder="Email"
-          required
-          className="w-full px-3 py-2 bg-[#010806] border border-slate-700 rounded-md text-sm focus:border-emerald-500 outline-none"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          required
-          className="w-full px-3 py-2 bg-[#010806] border border-slate-700 rounded-md text-sm focus:border-emerald-500 outline-none"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit" className="w-full py-2 bg-emerald-500 text-black font-bold rounded-md hover:bg-emerald-400 transition">
-          Login
+      <form onSubmit={handleLogin} className="w-80 bg-black border border-emerald-500/20 p-8 rounded-2xl space-y-5 shadow-[0_0_50px_rgba(16,185,129,0.1)]">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-black text-emerald-500 tracking-tight">WELCOME BACK</h2>
+          <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Log in to CricScore Arena</p>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="text-[10px] font-bold text-emerald-500/50 uppercase ml-1">Email Address</label>
+            <input
+              type="email"
+              placeholder="type your email.."
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 bg-[#050505] border border-emerald-500/10 rounded-xl text-sm focus:border-emerald-500/50 outline-none transition-all"
+            />
+          </div>
+
+          <div>
+            <label className="text-[10px] font-bold text-emerald-500/50 uppercase ml-1">Password</label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 bg-[#050505] border border-emerald-500/10 rounded-xl text-sm focus:border-emerald-500/50 outline-none transition-all"
+            />
+          </div>
+        </div>
+
+        <button type="submit" className="w-full py-4 bg-emerald-500 text-[#010806] font-black rounded-xl hover:bg-emerald-400 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] transition-all uppercase tracking-wider text-xs">
+          Login Now
         </button>
-        <p className="text-xs text-center text-slate-400">
-          Don't have account? <Link to="/signup" className="text-emerald-400">Signup</Link>
+
+        <p className="text-[11px] text-center text-slate-500 font-medium">
+          Don't have account? <Link to="/signup" className="text-emerald-500 hover:underline ml-1">Signup here</Link>
         </p>
       </form>
     </div>

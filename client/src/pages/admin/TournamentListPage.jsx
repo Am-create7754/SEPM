@@ -136,10 +136,10 @@ export default function TournamentListPage() {
             <div className="max-w-xl rounded-2xl border border-emerald-500/10 bg-black/40 p-10 text-center">
               <Trophy size={40} className="mx-auto text-slate-700 mb-4" />
               <p className="text-slate-400 font-medium">
-                No tournaments found for your account.
+                No tournaments found.
               </p>
               <p className="text-[10px] text-slate-600 mt-2 uppercase tracking-tighter">
-                Click create to start your first season
+                {isAllowed ? "Click create to start your first season" : "Check back later for upcoming tournaments"}
               </p>
             </div>
           ) : (

@@ -16,19 +16,46 @@ export default function PlayMatch() {
   const [city, setCity] = useState("");
   const [ballType, setBallType] = useState("white");
 
-  const grounds = [
-    "Wankhede Stadium",
-    "Eden Gardens",
-    "Narendra Modi Stadium",
-    "M Chinnaswamy Stadium",
-    "Arun Jaitley Stadium",
-    "MA Chidambaram Stadium",
-    "Rajiv Gandhi International Stadium",
-    "Punjab Cricket Association Stadium",
-    "Greenfield Stadium",
-    "Barsapara Cricket Stadium"
+  /* =========================
+     DYNAMIC GROUNDS DATA
+  ========================== */
+  const allGrounds = [
+    { name: "Wankhede Stadium", city: "mumbai" },
+    { name: "Brabourne Stadium", city: "mumbai" },
+    { name: "DY Patil Stadium", city: "mumbai" },
+    { name: "Eden Gardens", city: "kolkata" },
+    { name: "Narendra Modi Stadium", city: "ahmedabad" },
+    { name: "M Chinnaswamy Stadium", city: "bengaluru" },
+    { name: "Arun Jaitley Stadium", city: "delhi" },
+    { name: "MA Chidambaram Stadium", city: "chennai" },
+    { name: "Rajiv Gandhi International Stadium", city: "hyderabad" },
+    { name: "Punjab Cricket Association Stadium", city: "mohali" },
+    { name: "Greenfield Stadium", city: "trivandrum" },
+    { name: "Barsapara Cricket Stadium", city: "guwahati" },
+    { name: "Ekana Cricket Stadium", city: "lucknow" },
+    { name: "Sawai Mansingh Stadium", city: "jaipur" },
+    { name: "MCA Stadium", city: "pune" }
   ];
 
+  // City ke base par grounds filter karne ka logic
+  const normalizedCity = city.trim().toLowerCase();
+  const availableGrounds = allGrounds
+    .filter((g) => g.city === normalizedCity)
+    .map((g) => g.name);
+
+  // Agar user koi aisi city daale jo list me nahi hai, toh default options dikhao
+  if (availableGrounds.length === 0 && city.length > 0) {
+    availableGrounds.push("Local Ground", "Other Stadium");
+  }
+
+  // City change hone par selected ground reset karne ke liye
+  useEffect(() => {
+    setGround("");
+  }, [city]);
+
+  /* =========================
+     API CALLS
+  ========================== */
   useEffect(() => {
     async function fetchMatch() {
       try {
@@ -43,7 +70,6 @@ export default function PlayMatch() {
     fetchMatch();
   }, [matchId]);
 
-  // Ye function component ke andar bana
   async function handleNext() {
     try {
       await fetch(`http://localhost:5001/api/matches/${matchId}`, {
@@ -67,7 +93,6 @@ export default function PlayMatch() {
   /* =========================
      MATCH TYPE AUTO BALL
   ========================== */
-
   useEffect(() => {
     if (matchType === "test") {
       setBallType("red");
@@ -76,13 +101,7 @@ export default function PlayMatch() {
     }
   }, [matchType]);
 
-  // Powerplay aur date hata diya yahan se
-  const isValid =
-    overs &&
-    ballsPerOver &&
-    ground &&
-    city &&
-    ballType;
+  const isValid = overs && ballsPerOver && ground && city && ballType;
 
   if (!match) return <div className="text-white p-10">Loading...</div>;
 
@@ -94,7 +113,6 @@ export default function PlayMatch() {
         <Sidebar />
 
         <main className="flex-1 px-24 py-8 overflow-y-auto">
-
           {/* =========================
               TEAMS HEADER
           ========================== */}
@@ -114,12 +132,10 @@ export default function PlayMatch() {
             </div>
           </div>
 
-
           {/* =========================
              MATCH SETUP CARD
           ========================== */}
           <div className="max-w-3xl rounded-xl border border-emerald-500/20 bg-gradient-to-br from-[#0a2a1f] via-[#062019] to-[#041511] p-6">
-
             {/* MATCH TYPE */}
             <div className="flex gap-6 mb-6 text-sm">
               <label className="flex items-center gap-2">
@@ -150,7 +166,7 @@ export default function PlayMatch() {
               </label>
             </div>
 
-            {/* OVERS (Grid layout changed to 2 columns) */}
+            {/* OVERS */}
             <div className="grid grid-cols-2 gap-4 mb-6">
               <input
                 placeholder="No. of Overs"
@@ -171,21 +187,26 @@ export default function PlayMatch() {
 
             {/* CITY */}
             <input
-              placeholder="City / Town"
+              placeholder="City / Town (e.g. Mumbai, Chennai)"
               value={city}
               onChange={(e) => setCity(e.target.value)}
               className="w-full mb-4 px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm focus:outline-none focus:border-emerald-400"
             />
 
-            {/* GROUND */}
+            {/* GROUND DROPDOWN (Dynamic) */}
             <select
               value={ground}
               onChange={(e) => setGround(e.target.value)}
               className="w-full mb-6 px-3 py-2 rounded-md bg-black/40 border border-emerald-500/20 text-sm focus:outline-none focus:border-emerald-400"
+              disabled={!city} // Jab tak city na dale, disabled rakh
             >
-              <option className="bg-black" value="">Select Ground</option>
-              {grounds.map(g => (
-                <option className="bg-black" key={g}>{g}</option>
+              <option className="bg-black" value="">
+                {city ? "Select Ground" : "Enter city first"}
+              </option>
+              {availableGrounds.map((g) => (
+                <option className="bg-black" key={g} value={g}>
+                  {g}
+                </option>
               ))}
             </select>
 
@@ -193,11 +214,19 @@ export default function PlayMatch() {
             <div className="flex items-center gap-4 mb-6">
               <p className="text-sm text-slate-300">Ball Type</p>
 
-              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${ballType === "white" ? "border-emerald-400" : "border-slate-500"}`}>
+              <div
+                className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${
+                  ballType === "white" ? "border-emerald-400" : "border-slate-500"
+                }`}
+              >
                 ⚪
               </div>
 
-              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${ballType === "red" ? "border-emerald-400" : "border-slate-500"}`}>
+              <div
+                className={`w-10 h-10 rounded-full border-2 flex items-center justify-center ${
+                  ballType === "red" ? "border-emerald-400" : "border-slate-500"
+                }`}
+              >
                 🔴
               </div>
             </div>
@@ -207,15 +236,15 @@ export default function PlayMatch() {
               disabled={!isValid}
               onClick={handleNext}
               className={`w-full py-3 rounded-lg text-sm font-medium transition-colors
-                ${isValid
-                  ? "bg-emerald-500 text-black hover:bg-emerald-400"
-                  : "bg-slate-700 text-slate-400 cursor-not-allowed"
+                ${
+                  isValid
+                    ? "bg-emerald-500 text-black hover:bg-emerald-400"
+                    : "bg-slate-700 text-slate-400 cursor-not-allowed"
                 }
               `}
             >
               Next (Toss)
             </button>
-
           </div>
         </main>
       </div>

@@ -14,13 +14,13 @@ export default function SignupPage() {
     console.log("Attempting signup with:", { name, email, role }); // Debugging
 
     try {
-      const res = await axios.post("http://127.0.0.1:5001/api/auth/register", { 
-        name, 
-        email, 
-        password, 
-        role 
+      const res = await axios.post("http://127.0.0.1:5001/api/auth/register", {
+        name,
+        email,
+        password,
+        role
       });
-      
+
       console.log("Signup Response:", res.data);
       alert("Account created successfully ✅");
       navigate("/login");
@@ -45,7 +45,7 @@ export default function SignupPage() {
             <label className="text-[10px] font-bold text-emerald-500/50 uppercase ml-1">Full Name</label>
             <input
               type="text"
-              placeholder="Virat Kohli"
+              placeholder="Type Your Name..."
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -57,7 +57,7 @@ export default function SignupPage() {
             <label className="text-[10px] font-bold text-emerald-500/50 uppercase ml-1">Email Address</label>
             <input
               type="email"
-              placeholder="virat@king.com"
+              placeholder="Type Your Email..."
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -66,10 +66,10 @@ export default function SignupPage() {
           </div>
 
           <div>
-            <label className="text-[10px] font-bold text-emerald-500/50 uppercase ml-1">Secret Password</label>
+            <label className="text-[10px] font-bold text-emerald-500/50 uppercase ml-1">Password</label>
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder="Type Your Password..."
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}

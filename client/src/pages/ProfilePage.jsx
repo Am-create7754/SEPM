@@ -34,8 +34,7 @@ export default function ProfilePage() {
     );
   }
 
-  // 🔥 Yahan logic change kiya: Check if player-specific data exists
-  // Agar playerRole 'none' hai, matlab profile complete nahi hai
+
   const isProfileComplete = profile && profile.playerRole && profile.playerRole !== "none";
 
   return (
@@ -48,7 +47,7 @@ export default function ProfilePage() {
         <Sidebar />
 
         <main className="flex-1 px-8 lg:px-24 py-10 overflow-y-auto custom-scrollbar">
-          
+
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-emerald-50">My Profile</h1>
             <p className="text-sm text-slate-400 mt-1">Player information and personal stats</p>
@@ -61,7 +60,7 @@ export default function ProfilePage() {
               </div>
               <h2 className="text-xl font-bold text-emerald-50 mb-3">Setup Your Player Profile</h2>
               <p className="text-slate-400 text-sm mb-8 leading-relaxed">
-                Welcome, <span className="text-emerald-400 font-bold">{profile?.name}</span>! <br/>
+                Welcome, <span className="text-emerald-400 font-bold">{profile?.name}</span>! <br />
                 To start tracking your runs, wickets, and appearing in team squads, you need to set your batting and bowling styles.
               </p>
               <Link
@@ -88,18 +87,18 @@ export default function ProfilePage() {
                       </span>
                     </div>
                     <p className="text-sm text-slate-400 font-medium tracking-wide flex items-center gap-2">
-                      <span className="capitalize text-emerald-300">{profile.playerRole}</span> 
-                      <span className="text-slate-600">|</span> 
-                      {profile.batting}-hand bat 
-                      <span className="text-slate-600">|</span> 
+                      <span className="capitalize text-emerald-300">{profile.playerRole}</span>
+                      <span className="text-slate-600">|</span>
+                      {profile.batting}-hand bat
+                      <span className="text-slate-600">|</span>
                       {profile.bowling} bowler
                     </p>
                   </div>
                 </div>
 
                 <div className="flex flex-col items-end gap-2">
-                   <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Member Since</p>
-                   <p className="text-sm font-medium text-emerald-100">{new Date(profile.createdAt).toLocaleDateString()}</p>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Member Since</p>
+                  <p className="text-sm font-medium text-emerald-100">{new Date(profile.createdAt).toLocaleDateString()}</p>
                 </div>
               </div>
 
