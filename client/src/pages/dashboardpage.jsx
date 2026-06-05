@@ -119,7 +119,7 @@ export default function DashboardPage() {
 ======================= */
 function StatCard({ label, value, completed, icon }) {
   return (
-    <div className="rounded-xl bg-gradient-to-br from-[#0a2a1f] via-[#062019] to-[#041511] border border-emerald-500/20 px-5 py-4 shadow-[0_0_30px_rgba(16,185,129,0.05)] transition-transform hover:scale-[1.02]">
+    <div className="rounded-2xl bg-gradient-to-br from-[#0a2a1f] via-[#062019] to-[#041511] border border-emerald-500/20 px-6 py-5 shadow-[0_0_30px_rgba(16,185,129,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500/40 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)]">
       <div className="flex justify-between items-center mb-3">
         {/* Icon box */}
         <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400">
@@ -153,7 +153,7 @@ function MiniMatchCard({ match }) {
   const winnerName = match.winner?.name || (match.winner === match.teamA?._id ? teamAName : teamBName);
 
   return (
-    <div className="bg-gradient-to-br from-[#0a2a1f] via-[#062019] to-[#041511] border border-emerald-500/20 rounded-xl p-5 shadow-[0_0_20px_rgba(16,185,129,0.05)] flex justify-between items-center hover:border-emerald-500/40 transition-colors">
+    <div className="bg-gradient-to-br from-[#0a2a1f] via-[#062019] to-[#041511] border border-emerald-500/20 rounded-2xl p-6 shadow-[0_0_30px_rgba(16,185,129,0.05)] flex justify-between items-center hover:border-emerald-500/50 hover:shadow-[0_0_40px_rgba(16,185,129,0.15)] transition-all duration-300 group">
       
       <div className="flex-1 space-y-3">
         {/* Team A */}

@@ -18,7 +18,7 @@ export default function LoginPage() {
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
       alert("Login Successful ✅");
-      navigate("/");
+      navigate("/dashboard");
       window.location.reload(); // Taaki navbar/sidebar update ho jaye
     } catch (err) {
       alert(err.response?.data?.message || "Invalid credentials ❌");

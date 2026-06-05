@@ -25,7 +25,7 @@ export default function Sidebar() {
 
   // 🔥 Items defined INSIDE component so we can filter
   const items = [
-    { label: 'Dashboard', icon: <Home size={14} />, path: '/' },
+    { label: 'Dashboard', icon: <Home size={14} />, path: '/dashboard' },
     { label: 'Tournaments', icon: <Trophy size={14} />, path: '/tournaments' },
     { label: 'Matches', icon: <Calendar size={14} />, path: '/matches' },
     { label: 'Points Table', icon: <List size={14} />, path: '/points-table' },

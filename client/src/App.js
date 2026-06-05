@@ -26,6 +26,8 @@ import ScoringPage from './pages/scoring';
 
 
 
+import LandingPage from './pages/LandingPage';
+
 import { AuthProvider } from './context/AuthContext';
 
 export default function App() {
@@ -35,7 +37,8 @@ export default function App() {
         <Routes>
            <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-          <Route path="/" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/matches" element={<ProtectedRoute><MatchesPage /></ProtectedRoute>} />
           <Route path="/tournaments" element={<ProtectedRoute><TournamentListPage /></ProtectedRoute>} />
 <Route path="/admin/create-tournament" element={<ProtectedRoute><CreateTournamentPage /></ProtectedRoute>} />
